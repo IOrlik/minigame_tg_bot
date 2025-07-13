@@ -8,3 +8,9 @@ reply_kb = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True 
 )
+
+do_u_like_bots = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text = 'yes'), KeyboardButton(text='no')]
+    ]
+)

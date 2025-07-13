@@ -3,7 +3,7 @@ from aiogram import Router, F
 from aiogram.filters import or_f
 from aiogram.types import CallbackQuery
 from fight import Warrior, Archer, Mage, create_archer, create_mage, create_warrior, create_character
-from Data import CHAR_AMOUNT, DataBase, characters
+from Data import CHAR_AMOUNT, DataBase, fantasy_archer_names, fantasy_mage_names, fantasy_warrior_names
 from fight import random_attacking_char, Character
 from keyboard.inline import after_move_keyboard, after_end_keyboard, characters_spawn
 
@@ -35,16 +35,17 @@ async def get_query(callback: CallbackQuery):
     await callback.answer('')
     await callback.message.answer(text)
 
-@callbacks_router.callback_query(F.data == 'create')
+@callbacks_router.callback_query(or_f(F.data == 'create'))
 async def command_start_handler(t: CallbackQuery) -> None:
     text = f'Выбирайте какого персонажа хотите создать (Вы должны создать 2 или 3 разных персонажа, необязательно разных классов)'
     await t.answer('')
     await t.message.answer(text, reply_markup=characters_spawn)
 
-@callbacks_router.callback_query(or_f(F.data == 'startgame', F.data == 'new_game'))
+@callbacks_router.callback_query(or_f(F.data == 'startgame'))
 async def get_query(t: CallbackQuery):
+    await t.answer('')
     id_user = t.message.from_user.id
-    if len(DataBase[id_user]) == 2 or len(DataBase[id_user]) == 3: 
+    if len(DataBase[id_user]) == 2 or len(DataBase[id_user]) == 3:  
         text = '<pre>==-⚔ Бой начался ⚔-==\n'
         if DataBase[id_user][2] != None:
             returned_data = random_attacking_char(DataBase[id_user][0], DataBase[id_user][1], DataBase[id_user][2])
@@ -53,13 +54,13 @@ async def get_query(t: CallbackQuery):
             returned_data = random_attacking_char(DataBase[id_user][0], DataBase[id_user][1])
             text += returned_data[1] + '\n' + returned_data[0]
         text += '</pre>'
-        await t.answer('')
         await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
 
 @callbacks_router.callback_query(F.data == 'show_stats')
 async def get_query(callback:CallbackQuery):
     id_user = callback.message.from_user.id
     text = '<pre>'
+    print(DataBase[id_user])
     for i in range(len(DataBase[id_user])):
         text += DataBase[id_user][i].show_stats() + '\n\n'
     text += '</pre>'
@@ -68,6 +69,7 @@ async def get_query(callback:CallbackQuery):
 
 @callbacks_router.callback_query(F.data == 'next_move')
 async def get_query(t: CallbackQuery):
+    await t.message.edit_text(text=f'<pre>{t.message.text}</pre>', parse_mode = 'HTML')
     id_user = t.message.from_user.id
     await t.answer('')
     if not DataBase[id_user][0].is_alive() or not DataBase[id_user][1].is_alive() or not DataBase[id_user][2].is_alive():
@@ -90,17 +92,6 @@ async def get_query(t: CallbackQuery):
         text += '</pre>'
         await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
     
-
-
-@callbacks_router.callback_query(F.data == 'test')
-async def handle_test(t: CallbackQuery):
-    await t.answer('ТОЛЬЯТТИ')
-    await t.message.answer(text='Test')
-
-@callbacks_router.callback_query(F.data == 'help')
-async def handle_test(t: CallbackQuery):
-    await t.answer('')
-    await t.message.answer(text='Не, не буду помогать')
 
 
 

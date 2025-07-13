@@ -27,14 +27,14 @@ characters_spawn = InlineKeyboardMarkup(
 
 after_move_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text='Следующий ход', callback_data='next_move')], 
-        [InlineKeyboardButton(text='Статистика', callback_data='show_stats')]
+        [InlineKeyboardButton(text='Следующий ход', callback_data='next_move'), 
+        InlineKeyboardButton(text='Статистика', callback_data='show_stats')]
     ]
 )
 
 after_end_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text='Новая игра, с теми же персонажами', callback_data='new_game'), InlineKeyboardButton(text='Новая игра с новыми персонажами', callback_data='create')], 
+        [InlineKeyboardButton(text='Новая игра с новыми персонажами', callback_data='create_new')], 
         [InlineKeyboardButton(text='Статистика', callback_data='show_stats')]
     ]
 )

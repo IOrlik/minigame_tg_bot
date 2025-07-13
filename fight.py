@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import random 
-from Data import characters, DataBase
+from Data import DataBase, fantasy_warrior_names, fantasy_archer_names, fantasy_mage_names
 
 
 
@@ -44,19 +44,29 @@ class Warrior(Character):
     def __init__(self, level, health, strength, name):
         super().__init__(level, health, strength, name)
 
-    def special_ability(self):  
-        damage = self.strength * random.uniform(1.5, 2)
-        text = f'{self.name} впал в ярость и атаковал, нанеся {round(damage, 1)} единиц урона'
-        return damage, text
+    def show_stats(self):
+        stats = (f'Класс: Воин\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        return stats 
 
     def attack(self):
-        attacks_damage = random.uniform((self.strength*0.8) , (self.strength*1.2))
-        text = f'{self.name} атакует, нанося {round(attacks_damage, 1)} урона'
-        return attacks_damage, text
+        a = random.randint(1, 10)
+        if a > 2:
+            attacks_damage = random.uniform((self.strength*0.8) , (self.strength*1.2))
+            text = f'{self.name} атакует, нанося {round(attacks_damage, 1)} урона'
+            return attacks_damage, text
+        else: 
+            damage = self.strength * random.uniform(1.5, 2)
+            text = f'{self.name} впал в ярость и атаковал, нанеся {round(damage, 1)} единиц урона'
+            return damage, text
+
 
 class Archer(Character):
     def __init__(self, level, health, strength, name):
         super().__init__(level, health, strength, name)
+
+    def show_stats(self):
+        stats = (f'Класс: Лучник\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        return stats 
 
     def attack(self):
         chance = random.randint(1,10)
@@ -76,23 +86,31 @@ class Mage(Character):
         super().__init__(level, health, strength, name)
         self.mana = 100
 
-    def special_ability(self): 
-        damage = self.strength * random.uniform(1.5, 2)*(self.mana/100)
-        text = f'{self.name} бьет молнией, нанося {round(damage, 1)} единиц урона'
-        return damage, text
-
+    def show_stats(self):
+        stats = (f'Класс: Маг\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        return stats 
     
     def heal(self):
-        if self.health < 0.4 * self.health:
+        text = '\n'
+        healed = 0 
+        if self.health < 0.4 * self.health and healed == 0:
             healed_hp = random.uniform(0,3*self.health, 0,5*self.health)
             self.health += healed_hp
-            text = f'Маг восстановил {round(healed_hp, 1)} здоровья'
+            text += f'{self.name} восстановил {round(healed_hp, 1)} здоровья'
+            healed += 1
             return text
 
     def attack(self):
-        attacks_damage = random.uniform(self.strength*0.8 , self.strength*1.2)
-        text = f'{self.name} атакует, нанося {round(attacks_damage, 1)} урона'
-        return attacks_damage, text
+        a = random.randint(1, 10)
+        if a > 2: 
+            attacks_damage = random.uniform(self.strength*0.8 , self.strength*1.2)
+            text = f'{self.name} атакует, нанося {round(attacks_damage, 1)} урона'
+            return attacks_damage, text
+        else: 
+            damage = self.strength * random.uniform(1.5, 2)*(self.mana/100)
+            text = f'{self.name} бьет молнией, нанося {round(damage, 1)} единиц урона'
+            return damage, text
+
     
 char_id = 0 
 char_amount = 0 
@@ -156,23 +174,24 @@ def random_attacking_char(character1, character2, character3 = None):
             return character1.take_damage(damage), text
 
     if character1 == Mage():
-        character1.heal()
+        return character1.heal()
     if character2 == Mage():
-        character2.heal()
+        return character2.heal()
     if character3 != None and character3 == Mage():
-        character3.heal()
+        return character3.heal()
 
 def create_character(id_user, character_choice):
     DataBase[id_user] = DataBase.get(id_user, [])
+    
     if len(DataBase[id_user]) < 3:
         if character_choice == 1:
-            DataBase[id_user].append(create_archer(110, 40, "Archer"))
+            DataBase[id_user].append(create_archer(110, 40, random.choice(fantasy_archer_names)))
             w_message = "Лучник создан"
         elif character_choice == 2: 
-            DataBase[id_user].append(create_mage(90, 60, "Mage"))  
+            DataBase[id_user].append(create_mage(90, 60, random.choice(fantasy_mage_names)))  
             w_message = "Маг создан" 
         else:
-            DataBase[id_user].append(create_warrior(160, 30, "Warrior"))
+            DataBase[id_user].append(create_warrior(160, 30, random.choice(fantasy_warrior_names)))
             w_message = "Воин создан"        
     else: w_message = 'Превышено максимальное кол-во персонажей'
     return DataBase[id_user], w_message
