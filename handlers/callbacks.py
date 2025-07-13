@@ -1,10 +1,11 @@
 import aiogram 
-from aiogram import Router, F 
+from aiogram import Router, F
+from aiogram.filters import or_f
 from aiogram.types import CallbackQuery
 from fight import Warrior, Archer, Mage, create_archer, create_mage, create_warrior, create_character
 from Data import CHAR_AMOUNT, DataBase, characters
 from fight import random_attacking_char, Character
-from keyboard.inline import after_move_keyboard
+from keyboard.inline import after_move_keyboard, after_end_keyboard, characters_spawn
 
 
 callbacks_router = Router()
@@ -34,12 +35,17 @@ async def get_query(callback: CallbackQuery):
     await callback.answer('')
     await callback.message.answer(text)
 
+@callbacks_router.callback_query(F.data == 'create')
+async def command_start_handler(t: CallbackQuery) -> None:
+    text = f'Выбирайте какого персонажа хотите создать (Вы должны создать 2 или 3 разных персонажа, необязательно разных классов)'
+    await t.answer('')
+    await t.message.answer(text, reply_markup=characters_spawn)
 
-@callbacks_router.callback_query(F.data == 'startgame')
+@callbacks_router.callback_query(or_f(F.data == 'startgame', F.data == 'new_game'))
 async def get_query(t: CallbackQuery):
     id_user = t.message.from_user.id
     if len(DataBase[id_user]) == 2 or len(DataBase[id_user]) == 3: 
-        text = '<pre>==============-⚔ Бой начался ⚔-==============\n'
+        text = '<pre>==-⚔ Бой начался ⚔-==\n'
         if DataBase[id_user][2] != None:
             returned_data = random_attacking_char(DataBase[id_user][0], DataBase[id_user][1], DataBase[id_user][2])
             text += returned_data[1] + '\n' + returned_data[0]
@@ -63,29 +69,27 @@ async def get_query(callback:CallbackQuery):
 @callbacks_router.callback_query(F.data == 'next_move')
 async def get_query(t: CallbackQuery):
     id_user = t.message.from_user.id
+    await t.answer('')
     if not DataBase[id_user][0].is_alive() or not DataBase[id_user][1].is_alive() or not DataBase[id_user][2].is_alive():
-        text = '<pre>==============-⚔ Бой закончился ⚔-==============\n'
-        if not DataBase[id_user][0].is_alive():
-            text += f'💀{DataBase[id_user][0].name()} умер'
-        else: text += f'❤{DataBase[id_user][0].name()} жив'
-        if not DataBase[id_user][1].is_alive():
-            text += f'💀{DataBase[id_user][1].name()} умер' 
-        else: text += f'❤{DataBase[id_user][1].name()} жив'     
-        if not DataBase[id_user][2].is_alive():
-            text += f'💀{DataBase[id_user][2].name()} умер'
-        else: text += f'❤{DataBase[id_user][2].name()} жив'
+        text = '<pre>==-⚔ Бой закончился ⚔-==\n'
+        for i in range(len(DataBase[id_user])):
+            if not DataBase[id_user][i].is_alive():
+                text += f'💀{DataBase[id_user][i].name} умер\n'
+            else: text += f'❤{DataBase[id_user][i].name} жив\n'
+        text += '</pre>'
         text += '\n'
+        await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_end_keyboard)
 
-    if len(DataBase[id_user]) == 2 or len(DataBase[id_user]) == 3 and (DataBase[id_user][0].is_alive() and DataBase[id_user][1].is_alive() and DataBase[id_user][2].is_alive()): 
+    elif len(DataBase[id_user]) == 2 or len(DataBase[id_user]) == 3:
         text = '<pre>\n'
         if DataBase[id_user][2] != None:
             returned_data = random_attacking_char(DataBase[id_user][0], DataBase[id_user][1], DataBase[id_user][2])
         else: 
             returned_data = random_attacking_char(DataBase[id_user][0], DataBase[id_user][1])
         text += returned_data[1] + '\n' + returned_data[0]
-    text += '</pre>'
-    await t.answer('')
-    await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
+        text += '</pre>'
+        await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
+    
 
 
 @callbacks_router.callback_query(F.data == 'test')

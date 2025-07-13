@@ -32,6 +32,13 @@ after_move_keyboard = InlineKeyboardMarkup(
     ]
 )
 
+after_end_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Новая игра, с теми же персонажами', callback_data='new_game'), InlineKeyboardButton(text='Новая игра с новыми персонажами', callback_data='create')], 
+        [InlineKeyboardButton(text='Статистика', callback_data='show_stats')]
+    ]
+)
+
 
 testkb = InlineKeyboardMarkup(
     inline_keyboard=[
