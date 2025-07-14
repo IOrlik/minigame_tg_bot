@@ -2,7 +2,6 @@ from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram import F
-from fight import Warrior, Archer, Mage, create_archer, create_mage, create_warrior, char_amount
 from keyboard.inline import inline_kb, about_kb, characters_spawn, testkb
 from Data import CHAR_AMOUNT
 from keyboard.reply import reply_kb

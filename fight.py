@@ -95,8 +95,8 @@ class Mage(Character):
         healed = 0 
         if self.health < 0.4 * self.health and healed == 0:
             healed_hp = random.uniform(0,3*self.health, 0,5*self.health)
-            self.health += healed_hp
-            text += f'{self.name} восстановил {round(healed_hp, 1)} здоровья'
+            self.health += healed_hpч
+            text += f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n'
             healed += 1
             return text
 
@@ -148,20 +148,35 @@ def random_attacking_char(character1, character2, character3 = None):
             damage_nr, text = character1.attack()
             damage = round(damage_nr, 1)
             if random.randint(1,2) == 1: 
+                if character2 == Mage():
+                    text += character2.heal()
                 return character2.take_damage(damage), text
-            else: return character3.take_damage(damage), text
+            else: 
+                if character3 != None and character3 == Mage():
+                    text += character3.heal()
+                return character3.take_damage(damage), text
         elif choice == 2:
             damage_nr, text = character3.attack()
             damage = round(damage_nr, 1)
             if random.randint(1,2) == 1: 
+                if character1 == Mage():
+                    text += character1.heal()
                 return character1.take_damage(damage), text
-            else: return character2.take_damage(damage), text
+            else: 
+                if character2 == Mage():
+                    text += character2.heal()
+                return character2.take_damage(damage), text
         elif choice == 3:
             damage_nr, text = character2.attack()
             damage = round(damage_nr, 1)
             if random.randint(1,2) == 1: 
+                if character1 == Mage():
+                    text += character1.heal()
                 return character1.take_damage(damage), text
-            else: return character3.take_damage(damage), text
+            else: 
+                if character3 != None and character3 == Mage():
+                    text += character3.heal()
+                return character3.take_damage(damage), text
     else:
         choice = random.randint(1,2)
         if choice == 1:
@@ -173,12 +188,7 @@ def random_attacking_char(character1, character2, character3 = None):
             damage = round(damage_nr, 1)
             return character1.take_damage(damage), text
 
-    if character1 == Mage():
-        return character1.heal()
-    if character2 == Mage():
-        return character2.heal()
-    if character3 != None and character3 == Mage():
-        return character3.heal()
+
 
 def create_character(id_user, character_choice):
     DataBase[id_user] = DataBase.get(id_user, [])
