@@ -7,6 +7,8 @@ from handlers.commands import command_router
 from handlers.callbacks import callbacks_router
 from aiogram.fsm.storage.memory import MemoryStorage    
 from state import fsm_router
+from antiflood import AntiFloodMiddleware
+
 
 from dotenv import load_dotenv
 import os
@@ -22,6 +24,7 @@ dp = Dispatcher()
 dp.include_router(callbacks_router)     
 dp.include_router(command_router)
 dp.include_router(fsm_router)
+dp.message.middleware(AntiFloodMiddleware())
 
 async def RPGminigame():
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML), storage = storage)

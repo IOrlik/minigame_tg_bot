@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import random 
 from Data import DataBase, fantasy_warrior_names, fantasy_archer_names, fantasy_mage_names
-
+from database import add_users_character, get_users_character
 
 
 class Character(ABC):
@@ -91,14 +91,14 @@ class Mage(Character):
         return stats 
     
     def heal(self):
-        text = '\n'
         healed = 0 
-        if self.health < 0.4 * self.health and healed == 0:
-            healed_hp = random.uniform(0,3*self.health, 0,5*self.health)
-            self.health += healed_hpч
-            text += f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n'
+        if self.health < 30 and healed == 0 and self.health > 0:
+            healed_hp = random.uniform(0.9*self.health, 1.25*self.health)
+            self.health += healed_hp
+            text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n'
             healed += 1
             return text
+        return ''
 
     def attack(self):
         a = random.randint(1, 10)
@@ -112,96 +112,57 @@ class Mage(Character):
             return damage, text
 
     
-char_id = 0 
-char_amount = 0 
 def create_archer(hp, strength, name):
-    #char_id += 1 
-    global char_amount
-    char_amount += 1 
-    if char_amount <= 3:
-        return Archer(1, hp, strength, name)
-    else: print('Превышено максимальное кол-во персонажей')
+    return Archer(1, hp, strength, name)
 def create_mage(hp,strength, name):
-    #char_id += 1 
-    global char_amount
-    char_amount += 1
-    if char_amount <= 3:
-        return Mage(1, hp, strength, name)
-    else: print('Превышено максимальное кол-во персонажей')
+    return Mage(1, hp, strength, name)
 def create_warrior(hp, strength, name):
-    # char_id += 1 
-    global char_amount
-    char_amount += 1
-    if char_amount <= 3:
-        return Warrior(1, hp, strength, name)
-    else: print('Превышено максимальное кол-во персонажей')
+    return Warrior(1, hp, strength, name)
     
 
 # warrior = create_warrior(150, 40, 'Воин')
 # arch = create_archer(80, 50, 'Лучник')
 # mage = create_mage(120, 60, 'Маг')
 
-def random_attacking_char(character1, character2, character3 = None):
-    if character3 != None:
-        choice = random.randint(1, 3)
-        if choice == 1: 
-            damage_nr, text = character1.attack()
-            damage = round(damage_nr, 1)
-            if random.randint(1,2) == 1: 
-                if character2 == Mage():
-                    text += character2.heal()
-                return character2.take_damage(damage), text
-            else: 
-                if character3 != None and character3 == Mage():
-                    text += character3.heal()
-                return character3.take_damage(damage), text
-        elif choice == 2:
-            damage_nr, text = character3.attack()
-            damage = round(damage_nr, 1)
-            if random.randint(1,2) == 1: 
-                if character1 == Mage():
-                    text += character1.heal()
-                return character1.take_damage(damage), text
-            else: 
-                if character2 == Mage():
-                    text += character2.heal()
-                return character2.take_damage(damage), text
-        elif choice == 3:
-            damage_nr, text = character2.attack()
-            damage = round(damage_nr, 1)
-            if random.randint(1,2) == 1: 
-                if character1 == Mage():
-                    text += character1.heal()
-                return character1.take_damage(damage), text
-            else: 
-                if character3 != None and character3 == Mage():
-                    text += character3.heal()
-                return character3.take_damage(damage), text
-    else:
-        choice = random.randint(1,2)
-        if choice == 1:
-            damage_nr, text = character1.attack()
-            damage = round(damage_nr, 1)
-            return character2.take_damage(damage), text
-        else: 
-            damage_nr, text = character2.attack()
-            damage = round(damage_nr, 1)
-            return character1.take_damage(damage), text
+def attack_n_heal(character_att, character_defense1, character_defense2):
+    damage_nr, text = character_att.attack()
+    damage = round(damage_nr, 1)
+    if random.randint(1,2):
+        text += ' \n' + character_defense1.take_damage(damage)
+        if isinstance(character_defense1, Mage):
+            text += ' \n' + character_defense1.heal()
+        return text
+    else: 
+        text += ' \n' + character_defense2.take_damage(damage)
+        if isinstance(character_defense2, Mage): 
+            text += ' \n' + character_defense2.heal()
+        return text 
+    
 
+def random_attacking_char(character1, character2, character3):
+    text = ''
+    choice = random.randint(1, 3)
+    if choice == 1: 
+        return attack_n_heal(character1, character2, character3)
+    elif choice == 2:
+        return attack_n_heal(character2, character1, character3)
+    elif choice == 3:
+        return attack_n_heal(character3, character1, character2)
 
 
 def create_character(id_user, character_choice):
-    DataBase[id_user] = DataBase.get(id_user, [])
-    
+    w_message = ''
+    users_character = get_users_character(id_user)
+    print(len(users_character))
     if len(DataBase[id_user]) < 3:
         if character_choice == 1:
-            DataBase[id_user].append(create_archer(110, 40, random.choice(fantasy_archer_names)))
+            users_character = add_users_character(create_archer(110, 40, random.choice(fantasy_archer_names)))
             w_message = "Лучник создан"
         elif character_choice == 2: 
-            DataBase[id_user].append(create_mage(90, 60, random.choice(fantasy_mage_names)))  
+            users_character = add_users_character(90, 60, random.choice(fantasy_mage_names))
             w_message = "Маг создан" 
         else:
-            DataBase[id_user].append(create_warrior(160, 30, random.choice(fantasy_warrior_names)))
+            users_character = add_users_character(160, 30, random.choice(fantasy_warrior_names))
             w_message = "Воин создан"        
     else: w_message = 'Превышено максимальное кол-во персонажей'
     return DataBase[id_user], w_message
