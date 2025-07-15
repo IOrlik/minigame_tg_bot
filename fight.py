@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import random 
 from Data import DataBase, fantasy_warrior_names, fantasy_archer_names, fantasy_mage_names
-from database import add_users_character, get_users_character
 
 
 class Character(ABC):
@@ -95,7 +94,7 @@ class Mage(Character):
         if self.health < 30 and healed == 0 and self.health > 0:
             healed_hp = random.uniform(0.9*self.health, 1.25*self.health)
             self.health += healed_hp
-            text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n'
+            text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n Теперь у персонажа {round(healed_hp, 1)} здоровья'
             healed += 1
             return text
         return ''
@@ -152,18 +151,17 @@ def random_attacking_char(character1, character2, character3):
 
 def create_character(id_user, character_choice):
     w_message = ''
-    users_character = get_users_character(id_user)
-    print(len(users_character))
+    DataBase[id_user] = DataBase.get(id_user, [])
     if len(DataBase[id_user]) < 3:
         if character_choice == 1:
-            users_character = add_users_character(create_archer(110, 40, random.choice(fantasy_archer_names)))
-            w_message = "Лучник создан"
+            DataBase[id_user].append(create_archer(110, 40, random.choice(fantasy_archer_names)))
+            w_message = 'Лучник создан'
         elif character_choice == 2: 
-            users_character = add_users_character(90, 60, random.choice(fantasy_mage_names))
+            DataBase[id_user].append(create_mage(90, 60, random.choice(fantasy_mage_names)))
             w_message = "Маг создан" 
         else:
-            users_character = add_users_character(160, 30, random.choice(fantasy_warrior_names))
-            w_message = "Воин создан"        
+            DataBase[id_user].append(create_warrior(160, 30, random.choice(fantasy_warrior_names)))
+            w_message = "Воин создан"      
     else: w_message = 'Превышено максимальное кол-во персонажей'
     return DataBase[id_user], w_message
 

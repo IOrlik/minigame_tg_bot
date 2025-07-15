@@ -6,7 +6,6 @@ from fight import Warrior, Archer, Mage, create_archer, create_mage, create_warr
 from Data import CHAR_AMOUNT, DataBase, fantasy_archer_names, fantasy_mage_names, fantasy_warrior_names
 from fight import random_attacking_char, Character
 from keyboard.inline import after_move_keyboard, after_end_keyboard, characters_spawn
-from database import add_users_character, get_users_character
 
 callbacks_router = Router()
 
@@ -50,8 +49,8 @@ async def get_query(callback: CallbackQuery):
 async def get_query(callback: CallbackQuery):
     print(F.data)
     id_user = callback.message.from_user.id
-    users_characters = get_users_character(id_user)
-    users_characters, text = create_character(id_user, 1)
+    DataBase[id_user] = DataBase.get(id_user, [])
+    DataBase[id_user], text = create_character(id_user, 1)
     await callback.answer('')
     await callback.message.answer(text)
 
