@@ -94,7 +94,7 @@ class Mage(Character):
         if self.health < 30 and healed == 0 and self.health > 0:
             healed_hp = random.uniform(0.9*self.health, 1.25*self.health)
             self.health += healed_hp
-            text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\n Теперь у персонажа {round(healed_hp, 1)} здоровья'
+            text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\nТеперь у персонажа {round(self.health, 1)} здоровья'
             healed += 1
             return text
         return ''
@@ -154,14 +154,29 @@ def create_character(id_user, character_choice):
     DataBase[id_user] = DataBase.get(id_user, [])
     if len(DataBase[id_user]) < 3:
         if character_choice == 1:
-            DataBase[id_user].append(create_archer(110, 40, random.choice(fantasy_archer_names)))
-            w_message = 'Лучник создан'
+            name = ''
+            name1 = random.choice(fantasy_archer_names)
+            while name1 == name: 
+                name1 = random.choice(fantasy_archer_names)
+            name = name1 
+            DataBase[id_user].append(create_archer(110, 40, name))
+            w_message = '🏹 Лучник создан'
         elif character_choice == 2: 
-            DataBase[id_user].append(create_mage(90, 60, random.choice(fantasy_mage_names)))
-            w_message = "Маг создан" 
+            name = ''
+            name1 = random.choice(fantasy_mage_names)
+            while name1 == name: 
+                name1 = random.choice(fantasy_mage_names)
+            name = name1 
+            DataBase[id_user].append(create_mage(90, 40, name))
+            w_message = "🔮 Маг создан" 
         else:
-            DataBase[id_user].append(create_warrior(160, 30, random.choice(fantasy_warrior_names)))
-            w_message = "Воин создан"      
+            name = ''
+            name1 = random.choice(fantasy_warrior_names)
+            while name1 == name: 
+                name1 = random.choice(fantasy_warrior_names)
+            name = name1 
+            DataBase[id_user].append(create_warrior(160, 30, name))
+            w_message = "⚔ Воин создан"      
     else: w_message = 'Превышено максимальное кол-во персонажей'
     return DataBase[id_user], w_message
 

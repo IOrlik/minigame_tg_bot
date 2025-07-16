@@ -11,33 +11,33 @@ command_router = Router()
 
 @command_router.message(Command("menu"))
 async def command_start_handler(message: Message) -> None:
-    text = f'Вы открыли меню'
+    text = f'📕 Вы открыли меню, теперь у вас есть клавиатура с основными командами этого ТГ бота: \n'
     await message.answer(text, reply_markup=reply_kb)
 
 @command_router.message(Command("start"))
 async def command_start_handler(message: Message) -> None:
-    text = f'*очень красивый текст, который очень красиво описывает то как пользователь шедеврально нажал на кнопку, запустив игру*\nДля продолжения используйте команду create'
+    text = f'👋 Привет, я ТГ бот миниигра, где ты можешь создать своих персонажей и следить за ходом их битвы!\n🤔 Чтобы продолжить напишите команду /create'
     await message.answer(text)
 
 @command_router.message(Command("about"))
 async def command_start_handler(message: Message) -> None:
-    text = f'обо мне'
+    text = f'📕 С помощью кнопок ниже ты сможешь больше узнать обо мне!'
     await message.answer(text, reply_markup=about_kb)
 
 
 @command_router.message(Command("create"))
 async def command_start_handler(message: Message) -> None:
-    text = f'Выбирайте какого персонажа хотите создать (Вы должны создать 2 или 3 разных персонажа, необязательно разных классов)'
+    text = f'🤔 Выбирай каких персонажей ты хочешь создать, надо создать 3 разных персонажа, но ты можешь выбрать любые классы этих персонажей'
     await message.answer(text, reply_markup=characters_spawn)
 
 @command_router.message(Command("help"))
 async def command_start_handler(message: Message) -> None:
-    text = f'Через /menu можно получить быстрый доступ ко всем командам'
+    text = f'📕 Через /menu можно получить быстрый доступ ко всем командам\n 📗 Через /about ты можешь узнать больше о боте\n 📘 Через /create ты можешь создать персонажей и начать игру\n 📙 Через /remove_keyboard можно убрать клавиатуру'
     await message.answer(text)
 
 @command_router.message(Command('remove_keyboard'))
 async def command_start_handler(message: Message) -> None: 
-    text = 'a'
+    text = '✅ Клавиатура убрана'
     await message.answer(text, reply_markup=ReplyKeyboardRemove())
 
 

@@ -58,7 +58,7 @@ async def get_query(callback: CallbackQuery):
 async def command_create_handler(t: CallbackQuery) -> None:
     id_user = t.message.from_user.id  
     DataBase[id_user] = []
-    text = f'Выбирайте какого персонажа хотите создать (Вы должны создать 3 разных персонажа, необязательно разных классов)'
+    text = f'🤔 Выбирай каких персонажей ты хочешь создать, надо создать 3 разных персонажа, но ты можешь выбрать любые классы этих персонажей'
     await t.answer('')
     await t.message.answer(text, reply_markup=characters_spawn)
 
@@ -70,8 +70,11 @@ async def get_query(t: CallbackQuery):
         text = '<pre>==-⚔ Бой начался ⚔-==\n'
         text += random_attacking_char(DataBase[id_user][0], DataBase[id_user][1], DataBase[id_user][2])
         text += '</pre>'
-    else: text = 'Вам надо создать 3 персонажа'
-    await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
+        await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
+    else: 
+        text = 'Вам надо создать 3 персонажа'
+        await t.message.answer(text=text, parse_mode='HTML')
+    
 
 
 @callbacks_router.callback_query(F.data == 'show_stats')
