@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import random 
-from Data import DataBase, fantasy_warrior_names, fantasy_archer_names, fantasy_mage_names
+from Data import DataBase, fantasy_warrior_names, fantasy_archer_names, fantasy_mage_names, fantasy_knight_names
 
 
 class Character(ABC):
@@ -36,7 +36,7 @@ class Character(ABC):
         else: 
             pass
     def show_stats(self):
-        stats = (f'Имя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        stats = (f'Имя: {self.name}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}')
         return stats 
     
 class Warrior(Character):
@@ -44,7 +44,7 @@ class Warrior(Character):
         super().__init__(level, health, strength, name)
 
     def show_stats(self):
-        stats = (f'Класс: Воин\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        stats = (f'Класс: Воин ⚔\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
         return stats 
 
     def attack(self):
@@ -64,7 +64,7 @@ class Archer(Character):
         super().__init__(level, health, strength, name)
 
     def show_stats(self):
-        stats = (f'Класс: Лучник\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        stats = (f'Класс: Лучник 🏹\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
         return stats 
 
     def attack(self):
@@ -86,7 +86,7 @@ class Mage(Character):
         self.mana = 100
 
     def show_stats(self):
-        stats = (f'Класс: Маг\nИмя: {self.name}\nУровень: {self.level}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}\nОпыт: {self.xp}/100')
+        stats = (f'Класс: Маг 🧙‍♂️\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪' )
         return stats 
     
     def heal(self):
@@ -110,13 +110,49 @@ class Mage(Character):
             text = f'{self.name} бьет молнией, нанося {round(damage, 1)} единиц урона'
             return damage, text
 
-    
+class Knight(Character): 
+    def __init__(self, level, health, strength, name):
+        super().__init__(level, health, strength, name)
+
+    def show_stats(self):
+        stats = (f'Класс: Рыцарь 🛡\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
+        return stats 
+
+    def attack(self):
+        a = random.randint(1, 10)
+        if a > 2:
+            attacks_damage = random.uniform((self.strength*0.8) , (self.strength*1.2))
+            text = f'{self.name} атакует, нанося {round(attacks_damage, 1)} урона'
+            return attacks_damage, text
+        else: 
+            damage = self.strength * random.uniform(1.5, 2)
+            text = f'{self.name} сделал профессиональный удар, нанеся {round(damage, 1)} единиц урона'
+            return damage, text    
+        
+    def take_damage(self, attacks_damage):
+        a = random.randint(1, 10)
+        if a > 5: 
+            print(f'{self.name} получает {attacks_damage} единиц урона')
+            self.health -= attacks_damage 
+            if self.health > 0:
+                text = (f'У {self.name}а остается {round(self.health, 1)} здоровья')
+            else: text = (f'У {self.name}а не осталось здоровья, персонаж погибает')
+            print('\n')
+            return text
+        else: 
+            non_blocked_damage = round(random.uniform(attacks_damage * 0.5, attacks_damage * 0.8 ), 1)
+            self.health -= non_blocked_damage 
+            text = f'{self.name} заблокировал удар, получив {non_blocked_damage} единиц урона и заблокировав {round(attacks_damage - non_blocked_damage, 1)}'
+            return text
+        
 def create_archer(hp, strength, name):
     return Archer(1, hp, strength, name)
 def create_mage(hp,strength, name):
     return Mage(1, hp, strength, name)
 def create_warrior(hp, strength, name):
     return Warrior(1, hp, strength, name)
+def create_knight(hp, strength, name):
+    return Knight(1, hp, strength, name)
     
 
 # warrior = create_warrior(150, 40, 'Воин')
@@ -148,33 +184,42 @@ def random_attacking_char(character1, character2, character3):
     elif choice == 3:
         return attack_n_heal(character3, character1, character2)
 
+def list_names(id_user, DataBase):
+    l = []
+    for character_name in range(len(DataBase[id_user])): 
+        l.append(DataBase[id_user][character_name].name)
+    return l
 
 def create_character(id_user, character_choice):
     w_message = ''
     DataBase[id_user] = DataBase.get(id_user, [])
     if len(DataBase[id_user]) < 3:
         if character_choice == 1:
-            name = ''
-            name1 = random.choice(fantasy_archer_names)
-            while name1 == name: 
-                name1 = random.choice(fantasy_archer_names)
-            name = name1 
+            l = list_names(id_user, DataBase)
+            name = random.choice(fantasy_archer_names)
+            while name in l:
+                name = random.choice(fantasy_archer_names)
             DataBase[id_user].append(create_archer(110, 40, name))
             w_message = '🏹 Лучник создан'
         elif character_choice == 2: 
-            name = ''
-            name1 = random.choice(fantasy_mage_names)
-            while name1 == name: 
-                name1 = random.choice(fantasy_mage_names)
-            name = name1 
+            l = list_names(id_user, DataBase)
+            name = random.choice(fantasy_mage_names)
+            while name in l:
+                name = random.choice(fantasy_mage_names)
             DataBase[id_user].append(create_mage(90, 40, name))
             w_message = "🔮 Маг создан" 
+        elif character_choice == 4: 
+            l = list_names(id_user, DataBase)
+            name = random.choice(fantasy_knight_names)
+            while name in l:
+                name = random.choice(fantasy_knight_names)
+            DataBase[id_user].append(create_knight(120, 30, name))
+            w_message = "🛡 Рыцарь создан"             
         else:
-            name = ''
-            name1 = random.choice(fantasy_warrior_names)
-            while name1 == name: 
-                name1 = random.choice(fantasy_warrior_names)
-            name = name1 
+            l = list_names(id_user, DataBase)
+            name = random.choice(fantasy_warrior_names)
+            while name in l:
+                name = random.choice(fantasy_warrior_names)
             DataBase[id_user].append(create_warrior(160, 30, name))
             w_message = "⚔ Воин создан"      
     else: w_message = 'Превышено максимальное кол-во персонажей'

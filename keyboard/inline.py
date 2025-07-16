@@ -18,9 +18,8 @@ about_kb = InlineKeyboardMarkup(
 
 characters_spawn = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text = '⚔ Создать Воина', callback_data='warrior')],
-        [InlineKeyboardButton(text = '🔮 Создать Мага', callback_data='mage')],
-        [InlineKeyboardButton(text = '🏹 Создать Лучника', callback_data='archer')],
+        [InlineKeyboardButton(text = '⚔ Создать Воина', callback_data='warrior'), InlineKeyboardButton(text = '🔮 Создать Мага', callback_data='mage')],
+        [InlineKeyboardButton(text = '🏹 Создать Лучника', callback_data='archer'), InlineKeyboardButton(text='🛡 Создать Рыцаря', callback_data = 'knight')],
         [InlineKeyboardButton(text = '⚔ Начать битву', callback_data = 'startgame')]        
     ]
 )
@@ -38,7 +37,6 @@ after_end_keyboard = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='📖 Статистика', callback_data='show_stats')]
     ]
 )
-
 
 testkb = InlineKeyboardMarkup(
     inline_keyboard=[

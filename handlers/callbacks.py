@@ -29,7 +29,6 @@ callbacks_router = Router()
 
 @callbacks_router.callback_query(F.data == 'warrior')
 async def get_query(callback: CallbackQuery):
-    print(F.data)
     id_user = callback.message.from_user.id
     DataBase[id_user] = DataBase.get(id_user, [])
     DataBase[id_user], text = create_character(id_user, 3)
@@ -38,7 +37,6 @@ async def get_query(callback: CallbackQuery):
 
 @callbacks_router.callback_query(F.data == 'mage')
 async def get_query(callback: CallbackQuery):
-    print(F.data)
     id_user = callback.message.from_user.id
     DataBase[id_user] = DataBase.get(id_user, [])
     DataBase[id_user], text = create_character(id_user, 2)
@@ -47,10 +45,17 @@ async def get_query(callback: CallbackQuery):
 
 @callbacks_router.callback_query(F.data == 'archer')
 async def get_query(callback: CallbackQuery):
-    print(F.data)
     id_user = callback.message.from_user.id
     DataBase[id_user] = DataBase.get(id_user, [])
     DataBase[id_user], text = create_character(id_user, 1)
+    await callback.answer('')
+    await callback.message.answer(text)
+
+@callbacks_router.callback_query(F.data == 'knight')
+async def get_query(callback: CallbackQuery):
+    id_user = callback.message.from_user.id
+    DataBase[id_user] = DataBase.get(id_user, [])
+    DataBase[id_user], text = create_character(id_user, 4)
     await callback.answer('')
     await callback.message.answer(text)
 
@@ -58,13 +63,14 @@ async def get_query(callback: CallbackQuery):
 async def command_create_handler(t: CallbackQuery) -> None:
     id_user = t.message.from_user.id  
     DataBase[id_user] = []
-    text = f'🤔 Выбирай каких персонажей ты хочешь создать, надо создать 3 разных персонажа, но ты можешь выбрать любые классы этих персонажей'
+    text = f'🤔 Создай разных персонажей (необязательно разных классов)\n❗ Максимум можно создать всего 3 персонажа'
     await t.answer('')
     await t.message.answer(text, reply_markup=characters_spawn)
 
 @callbacks_router.callback_query(or_f(F.data == 'startgame'))
 async def get_query(t: CallbackQuery):
     await t.answer('')
+    await t.message.edit_text(f'{t.message.text}', parse_mode = 'HTML')
     id_user = t.message.from_user.id
     if len(DataBase[id_user]) == 3:  
         text = '<pre>==-⚔ Бой начался ⚔-==\n'
