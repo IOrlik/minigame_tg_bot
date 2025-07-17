@@ -25,7 +25,11 @@ callbacks_router = Router()
 #     print(DataBase[id_user])
 #     await callback.message.answer(text)
 
-
+@callbacks_router.callback_query(F.data == 'help')
+async def get_query(callback: CallbackQuery):
+    await callback.answer('')
+    text = f'📕 Через /menu можно получить быстрый доступ ко всем командам\n📗 Через /about ты можешь узнать больше о боте\n📘 Через /create ты можешь создать персонажей и начать игру\n📙 Через /remove_keyboard можно убрать клавиатуру'
+    await callback.message.answer(text)
 
 @callbacks_router.callback_query(F.data == 'warrior')
 async def get_query(callback: CallbackQuery):
@@ -70,10 +74,10 @@ async def command_create_handler(t: CallbackQuery) -> None:
 @callbacks_router.callback_query(or_f(F.data == 'startgame'))
 async def get_query(t: CallbackQuery):
     await t.answer('')
-    await t.message.edit_text(f'{t.message.text}', parse_mode = 'HTML')
     id_user = t.message.from_user.id
     if len(DataBase[id_user]) == 3:  
         text = '<pre>==-⚔ Бой начался ⚔-==\n'
+        await t.message.edit_text(f'{t.message.text}', parse_mode = 'HTML')
         text += random_attacking_char(DataBase[id_user][0], DataBase[id_user][1], DataBase[id_user][2])
         text += '</pre>'
         await t.message.answer(text=text, parse_mode='HTML', reply_markup=after_move_keyboard)
