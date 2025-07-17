@@ -95,7 +95,7 @@ class Mage(Character):
             healed_hp = random.uniform(0.9*self.health, 1.25*self.health)
             self.health += healed_hp
             text = f'{self.name} восстановил {round(healed_hp, 1)} здоровья\nТеперь у персонажа {round(self.health, 1)} здоровья'
-            healed 
+            healed += 1
             return text
         return ''
 
