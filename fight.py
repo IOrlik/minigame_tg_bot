@@ -36,7 +36,11 @@ class Character(ABC):
         else: 
             pass
     def show_stats(self):
-        stats = (f'Имя: {self.name}\nЗдоровье: {round(self.health, 1)}\nСила: {self.strength}')
+        if self.health < 0:
+            health_non_negative = 0
+        else:
+            health_non_negative = self.health  
+        stats = (f'Имя: {self.name}\nЗдоровье: {round(health_non_negative, 1)}\nСила: {self.strength}')
         return stats 
     
 class Warrior(Character):
@@ -44,7 +48,11 @@ class Warrior(Character):
         super().__init__(level, health, strength, name)
 
     def show_stats(self):
-        stats = (f'Класс: Воин ⚔\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
+        if self.health < 0:
+            health_non_negative = 0
+        else:
+            health_non_negative = self.health        
+        stats = (f'Класс: Воин ⚔\nИмя: {self.name}\nЗдоровье: {round(health_non_negative, 1)} ♥\nСила: {self.strength} 💪')
         return stats 
 
     def attack(self):
@@ -64,7 +72,11 @@ class Archer(Character):
         super().__init__(level, health, strength, name)
 
     def show_stats(self):
-        stats = (f'Класс: Лучник 🏹\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
+        if self.health < 0:
+            health_non_negative = 0
+        else:
+            health_non_negative = self.health
+        stats = (f'Класс: Лучник 🏹\nИмя: {self.name}\nЗдоровье: {round(health_non_negative, 1)} ♥\nСила: {self.strength} 💪')
         return stats 
 
     def attack(self):
@@ -86,7 +98,11 @@ class Mage(Character):
         self.mana = 100
 
     def show_stats(self):
-        stats = (f'Класс: Маг 🧙‍♂️\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪' )
+        if self.health < 0:
+            health_non_negative = 0
+        else:
+            health_non_negative = self.health
+        stats = (f'Класс: Маг 🧙‍♂️\nИмя: {self.name}\nЗдоровье: {round(health_non_negative, 1)} ♥\nСила: {self.strength} 💪' )
         return stats 
     
     def heal(self):
@@ -113,9 +129,13 @@ class Mage(Character):
 class Knight(Character): 
     def __init__(self, level, health, strength, name):
         super().__init__(level, health, strength, name)
-
+        
     def show_stats(self):
-        stats = (f'Класс: Рыцарь 🛡\nИмя: {self.name}\nЗдоровье: {round(self.health, 1)} ♥\nСила: {self.strength} 💪')
+        if self.health < 0:
+            health_non_negative = 0
+        else:
+            health_non_negative = self.health
+        stats = (f'Класс: Рыцарь 🛡\nИмя: {self.name}\nЗдоровье: {round(health_non_negative, 1)} ♥\nСила: {self.strength} 💪')
         return stats 
 
     def attack(self):
